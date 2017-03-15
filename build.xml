@@ -22,6 +22,13 @@
     <condition property="plugin.version" value="${build.life.id}" else="dev">
         <isset property="build.life.id" />
     </condition>
+    <available classname="org.apache.ivy.Main" property="ivy.installed"/>
+    <condition property="install-ivy.no">
+        <or>
+            <isset property="ivy.installed" />
+            <isset property="build.life.id" />
+        </or>
+    </condition>
 
     <property name="MAVEN_HOME" value="${env.MAVEN_HOME}"/>
 
@@ -112,10 +119,9 @@
     <!-- =================================================== -->
     <!-- INSTALL IVY TARGET                                  -->
     <!-- =================================================== -->
-    <available classname="org.apache.ivy.Main" property="ivy.installed"/>
-    <target name="install-ivy" unless="build.life.id" depends="-install, -fail"></target>
+    <target name="install-ivy" unless="install-ivy.no" depends="-install, -fail"></target>
 
-    <target name="-install" description="Install ivy" unless="ivy.installed">
+    <target name="-install" description="Install ivy" unless="install-ivy.no">
         <!-- Installation -->
         <property name="antHome" value="${user.home}${file.separator}.ant"/>
         <mkdir dir="${antHome}${file.separator}lib"/>
@@ -130,7 +136,7 @@
     </target>
 
     <!-- Default to fail if Ivy installed, unless -DfailIvy=false : Used for .travis -->
-    <target name="-fail" if="do.fail">
+    <target name="-fail" if="do.fail" unless="install-ivy.no">
         <fail message="Please run the build again.${line.separator}Note: If you get this message more than once, trying specify your Ant's home directory with the flag: ant -DantHome='ant/home/directory/here' or set/export the `ANT_HOME` environment variable." />
     </target>
 
