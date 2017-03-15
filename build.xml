@@ -113,7 +113,7 @@
     <!-- INSTALL IVY TARGET                                  -->
     <!-- =================================================== -->
     <available classname="org.apache.ivy.Main" property="ivy.installed"/>
-    <target name="install-ivy" depends="-install, -fail"></target>
+    <target name="install-ivy" unless="build.life.id" depends="-install, -fail"></target>
 
     <target name="-install" description="Install ivy" unless="ivy.installed">
         <!-- Installation -->
