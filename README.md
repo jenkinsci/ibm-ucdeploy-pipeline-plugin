@@ -6,6 +6,12 @@ More information about this plugin is available [here](https://developer.ibm.com
 ## Installation
 The compiled plugin is available for download on the [IBM UrbanCode website](https://developer.ibm.com/urbancode/plugin/jenkins-2-0/). Download the plugin from our website if you wish to skip the manual build step. No special steps are required for installation. Otherwise, clone this repository and run the `ant` command in the top level folder. This should compile the code and create a .hpi file within the /dist folder. Use this command if you wish to make local changes to the plugin. The build process will automatically install Apache Ivy if it is not previously installed.
 
+### Support
+Plug-ins downloaded directly from the [IBM UrbanCode Plug-ins microsite](https://developer.ibm.com/urbancode/plugins) are fully supported by IBM. Create a GitHub Issue or Pull Request for minor requests and bug fixes. For time sensitive issues that require immediate assistance, [file a PMR](https://www-947.ibm.com/support/servicerequest/newServiceRequest.action) through the normal IBM support channels. Plug-ins built externally or modified with custom code are supported on a best-effort-basis using GitHub Issues.
+
+### Locally Build the Plug-in
+This open source plug-in uses Ant as its build tool. [Install the latest version of Ant](http://ant.apache.org/manual/install.html) to build the plug-in locally. Build the plug-in by running the `ant` command in the plug-in's root directory. The plug-in distributable will be placed under the `dist` folder.
+
 ## Pipeline Examples
 ### Create Component Version
 ```groovy
