@@ -93,6 +93,9 @@ node {
 ```
 
 ## Release Notes
+### Version 2.6
+Fixed APAR PI85407 - Importing component versions no longer fails when runtime properties aren't provided.
+
 ### Version 2.5
 RFE 104275 - Support for Description and Application Request Properties on deployments.
 
