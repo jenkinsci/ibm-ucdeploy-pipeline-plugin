@@ -93,6 +93,8 @@ node {
 ```
 
 ## Release Notes
+### Version 2.7
+Fixed APAR PI91900 - Unfilled application process properties unable to be checked with a snapshot.
 ### Version 2.6
 Fixed APAR PI85407 - Importing component versions no longer fails when runtime properties aren't provided.
 

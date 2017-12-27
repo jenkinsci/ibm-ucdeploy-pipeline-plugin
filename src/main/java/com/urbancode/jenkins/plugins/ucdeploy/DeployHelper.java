@@ -242,7 +242,7 @@ public class DeployHelper {
         try {
             // Confirm all application request properties are fulfilled (not done by UCD)
             JSONArray unfilledProps = appClient.checkUnfilledApplicationProcessRequestProperties(deployApp,
-                    deployProc, requestProperties);
+                    deployProc, snapshot, requestProperties);
             if (unfilledProps.length() > 0) {
                 List<String> props = new ArrayList<String>();
                 for (int i = 0; i < unfilledProps.length(); i++) {
