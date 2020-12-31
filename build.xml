@@ -19,6 +19,16 @@
     <condition property="plugin.version" value="${env.AH_BUILD_LIFE_ID}" else="dev">
         <isset property="env.AH_BUILD_LIFE_ID" />
     </condition>
+    <condition property="plugin.version" value="${build.life.id}" else="dev">
+        <isset property="build.life.id" />
+    </condition>
+    <available classname="org.apache.ivy.Main" property="ivy.installed"/>
+    <condition property="install-ivy.no">
+        <or>
+            <isset property="ivy.installed" />
+            <isset property="build.life.id" />
+        </or>
+    </condition>
 
     <property name="MAVEN_HOME" value="${env.MAVEN_HOME}"/>
 
@@ -87,7 +97,42 @@
             xmlFile="dependencies.xml" />
     </target>
 
-    <target name="publish" depends="dist" unless="publish.no"
+    <target name="resolve-ivy" depends="install-ivy" unless="build.life.id" description="Resolve all ivy dependencies">
+        <ivy:settings file="ivysettings.xml"/>
+        <mkdir dir="${lib.dir}"/>
+        <mkdir dir="${lib.build.dir}"/>
+        <mkdir dir="${lib.test.dir}"/>
+        <ivy:retrieve conf="default" pattern="${lib.dir}/[artifact]-[revision](-[classifier]).[ext]"/>
+        <ivy:retrieve conf="urbancode" pattern="${lib.dir}/[artifact].[ext]"/>
+        <ivy:retrieve conf="build" pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]"/>
+        <ivy:retrieve conf="test" pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]"/>
+    </target>
+
+    <!-- =================================================== -->
+    <!-- INSTALL IVY TARGET                                  -->
+    <!-- =================================================== -->
+    <target name="install-ivy" unless="install-ivy.no" depends="-install, -fail"></target>
+
+    <target name="-install" description="Install ivy" unless="install-ivy.no">
+        <!-- Installation -->
+        <property name="antHome" value="${user.home}${file.separator}.ant"/>
+        <mkdir dir="${antHome}${file.separator}lib"/>
+        <get dest="${antHome}${file.separator}lib${file.separator}ivy.jar" src="http://search.maven.org/remotecontent?filepath=org/apache/ivy/ivy/2.3.0/ivy-2.3.0.jar"/>
+        <echo message="SUCCESS! Ivy has been installed in ${antHome}." />
+
+        <!-- Determine whether to continue or fail -->
+        <property name="failIvy" value="true"/>
+        <condition property="do.fail">
+            <equals arg1="${failIvy}" arg2="true" />
+        </condition>
+    </target>
+
+    <!-- Default to fail if Ivy installed, unless -DfailIvy=false : Used for .travis -->
+    <target name="-fail" if="do.fail" unless="install-ivy.no">
+        <fail message="Please run the build again.${line.separator}Note: If you get this message more than once, trying specify your Ant's home directory with the flag: ant -DantHome='ant/home/directory/here' or set/export the `ANT_HOME` environment variable." />
+    </target>
+
+    <target name="publish" if="buildlife.exists" depends="dist" unless="publish.no"
             description="Publish artifacts to local codestation repository">
         <codestation:publish
             project="${ahp.project.name}"

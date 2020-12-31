@@ -56,6 +56,7 @@ node {
             deployApp: 'Jenkins',
             deployEnv: 'Test',
             deployProc: 'Deploy Jenkins',
+            deployReqProps: 'AppProcessProp1=Value1\nAppProcessProp2=Value2',
             createProcess: [
                 $class: 'com.urbancode.jenkins.plugins.ucdeploy.ProcessHelper$CreateProcessBlock',
                 processComponent: 'Deploy'
