@@ -93,6 +93,9 @@ node {
 ```
 
 ## Release Notes
+### Version 2.20
+Fixed APAR PH24835 - Update dependencies for compatibility for jenkins 2.2.
+
 ### Version 2.19
 Fixed : Addition of latest version to specified component only instead of all components.
 
