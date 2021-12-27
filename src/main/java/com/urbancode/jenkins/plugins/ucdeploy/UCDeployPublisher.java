@@ -507,7 +507,6 @@ public class UCDeployPublisher extends Builder implements SimpleBuildStep {
         if (build.getResult() == Result.FAILURE || build.getResult() == Result.ABORTED) {
                 throw new AbortException("Skip artifacts upload to IBM UrbanCode Deploy - build failed or aborted.");
             }
-                listener.getLogger().println("Pushing Failed Build");  
         }
 
         UCDeploySite udSite = getSite();
