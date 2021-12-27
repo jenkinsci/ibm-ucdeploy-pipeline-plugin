@@ -93,7 +93,9 @@ node {
 ```
 
 ## Release Notes
-
+### Version 2.23
+ Fixed : Removed checkbox to push failed build as it was causing Trigger version Import step to work improperly
+ 
 ### Version 2.24
 Fixed : Updated plugin url.
 
