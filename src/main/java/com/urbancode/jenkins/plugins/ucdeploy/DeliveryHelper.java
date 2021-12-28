@@ -96,7 +96,6 @@ public class DeliveryHelper implements Serializable {
         private String pushProperties;
         private String pushDescription;
         private Boolean pushIncremental;
-        private Boolean pushFailedBuild;
 
         @DataBoundConstructor
         public Push(
@@ -107,7 +106,6 @@ public class DeliveryHelper implements Serializable {
             String pushProperties,
             String pushDescription,
             Boolean pushIncremental,
-            Boolean pushFailedBuild)
         {
             super(DeliveryType.Push);
             this.pushVersion = pushVersion;
@@ -117,7 +115,6 @@ public class DeliveryHelper implements Serializable {
             this.pushProperties = pushProperties;
             this.pushDescription = pushDescription;
             this.pushIncremental = pushIncremental;
-            this.pushFailedBuild = pushFailedBuild;
         }
 
         public String getPushVersion() {
@@ -183,15 +180,7 @@ public class DeliveryHelper implements Serializable {
             }
         }
 
-        public Boolean getPushFailedBuild() {
-            if (pushFailedBuild != null) {
-                return pushFailedBuild;
-            }
-            else {
-                return false;
-            }
-        }
-
+        
         @Extension
         public static final DeliveryDescriptor D = new DeliveryDescriptor(Push.class);
     }
