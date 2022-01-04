@@ -105,7 +105,7 @@ public class DeliveryHelper implements Serializable {
             String fileExcludePatterns,
             String pushProperties,
             String pushDescription,
-            Boolean pushIncremental,
+            Boolean pushIncremental)
         {
             super(DeliveryType.Push);
             this.pushVersion = pushVersion;
