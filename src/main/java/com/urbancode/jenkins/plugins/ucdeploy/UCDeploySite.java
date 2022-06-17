@@ -27,6 +27,9 @@ import org.apache.http.HttpResponse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * This class is used to configure individual sites which are
  * stored globally in the GlobalConfig object
@@ -34,6 +37,7 @@ import org.kohsuke.stapler.DataBoundSetter;
  */
 @SuppressWarnings("deprecation") // Triggered by DefaultHttpClient
 public class UCDeploySite implements Serializable {
+    public static final Logger log = LoggerFactory.getLogger(UCDeploySite.class);
 
     private static final long serialVersionUID = -8723534991244260459L;
 
@@ -101,10 +105,13 @@ public class UCDeploySite implements Serializable {
     }
 
     public DefaultHttpClient getClient() {
-        if (client == null) {
+        log.info("[UCD] client = UDRestClient.createHttpClient(user, password.toString(), trustAllCerts);");
+        try {
             client = UDRestClient.createHttpClient(user, password.toString(), trustAllCerts);
+            return client;
+        } catch (Exception e) {
+            throw new AbortException("[UCD] client = UDRestClient.createHttpClient(user, password.toString(), trustAllCerts) : " + e.getMessage());
         }
-        return client;
     }
 
     public DefaultHttpClient getTempClient(String tempUser, Secret tempPassword) {
