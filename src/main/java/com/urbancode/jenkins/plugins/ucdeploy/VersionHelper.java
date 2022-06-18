@@ -157,13 +157,26 @@ public class VersionHelper {
             }
 
             UUID versionId;
+            File base = new File(envVars.expand(pushBlock.getBaseDir());
+            if (!base.exists()) {
+                throw new AbortException("Base artifact directory " + base.getAbsolutePath() + " does not exist");
+            }
+            
+            if(base.list().length==0) {
+                throw new AbortException("Base artifact directory " + base.getAbsolutePath() + " does not contain any files to upload. Please place files.");
+            }
+            String[] includes = splitFiles(envVars.expand(pushBlock.getFileIncludePatterns()));
+            String[] excludes = splitFiles(envVars.expand(pushBlock.getFileExcludePatterns()));
+            listener.getLogger().println("Uploading files to version '" + version + "' on component '" + componentName + "'");
             try {
-                versionId = verClient.createVersion(componentName, version, envVars.expand(pushBlock.getPushDescription()));
+                //versionId = verClient.createVersion(componentName, version, envVars.expand(pushBlock.getPushDescription()));
+                versionId = verClient.createAndAddVersionFiles(componentName, version, envVars.expand(pushBlock.getPushDescription()), base, "", includes, excludes, true, true, null, null)
             }
             catch (Exception ex) {
                 throw new AbortException("Failed to create component version: " + ex.getMessage());
             }
             listener.getLogger().println("Successfully created component version with UUID '" + versionId.toString() + "'");
+            listener.getLogger().println("Successfully uploaded files");
 
             try {
                 putEnvVar(componentName + "_VersionId", versionId.toString());
@@ -173,13 +186,13 @@ public class VersionHelper {
             }
 
             // upload files
-            listener.getLogger().println("Uploading files to version '" + version + "' on component '" + componentName + "'");
-            uploadVersionFiles(envVars.expand(pushBlock.getBaseDir()),
-                               componentName,
-                               version,
-                               envVars.expand(pushBlock.getFileIncludePatterns()),
-                               envVars.expand(pushBlock.getFileExcludePatterns()));
-            listener.getLogger().println("Successfully uploaded files");
+            
+            // uploadVersionFiles(envVars.expand(pushBlock.getBaseDir()),
+            //                    componentName,
+            //                    version,
+            //                    envVars.expand(pushBlock.getFileIncludePatterns()),
+            //                    envVars.expand(pushBlock.getFileExcludePatterns()));
+           
 
             // set version properties
             listener.getLogger().println("Setting properties for version '" + version + "' on component '" + componentName + "'");
