@@ -106,7 +106,10 @@ public class UCDeploySite implements Serializable {
 
     public DefaultHttpClient getClient() {
         log.info("[UCD] client = UDRestClient.createHttpClient(user, password.toString(), trustAllCerts) Start...");
-        client = UDRestClient.createHttpClient(user, password.getPlainText(), trustAllCerts);
+        if (client == null) {
+            log.info("Client was null...");
+            client = UDRestClient.createHttpClient(user, password.getPlainText(), trustAllCerts);
+        }
         log.info("[UCD] client = UDRestClient.createHttpClient(user, password.toString(), trustAllCerts) End...");
         return client;
     }
