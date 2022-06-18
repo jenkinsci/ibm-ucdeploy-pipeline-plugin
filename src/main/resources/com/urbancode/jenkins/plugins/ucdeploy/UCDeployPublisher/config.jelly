@@ -81,7 +81,7 @@
               <f:textarea/>
             </f:entry>
             <f:entry field="charset" title="Charset" help="${helpURL}/create/delivery/push/charset.html">
-              <f:textarea/>
+              <f:textbox/>
             </f:entry>
             <f:entry field="pushProperties" title="Version Properties" help="${helpURL}/create/delivery/push/properties.html">
               <f:textarea/>
