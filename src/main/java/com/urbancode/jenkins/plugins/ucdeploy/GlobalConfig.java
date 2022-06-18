@@ -132,15 +132,16 @@ public class GlobalConfig extends JobProperty<Job<?, ?>> {
                 @QueryParameter("url") final String url,
                 @QueryParameter("user") final String user,
                 @QueryParameter("password") final String password,
-                @QueryParameter("trustAllCerts") final boolean trustAllCerts)
+                @QueryParameter("trustAllCerts") final boolean trustAllCerts,
+                @QueryParameter("alwaysCreateNewClient") final boolean alwaysCreateNewClient)
         throws IOException, ServletException {
             new FormFieldValidator(req, rsp, true) {
                 @Override
                 protected void check() throws IOException, ServletException {
                     try {
                         log.info("[UrbanCode Deploy] Starting Test Connection...");
-                        log.info("{profileName: " + profileName + ", url: " + url + ", user: " + user + ", trustAllCerts: " + trustAllCerts + "}");
-                        UCDeploySite site = new UCDeploySite(profileName, url, user, password, trustAllCerts);
+                        log.info("{profileName: " + profileName + ", url: " + url + ", user: " + user + ", trustAllCerts: " + trustAllCerts + ", alwaysCreateNewClient: " + alwaysCreateNewClient + "}");
+                        UCDeploySite site = new UCDeploySite(profileName, url, user, password, trustAllCerts, alwaysCreateNewClient);
                         site.verifyConnection();
                         log.info("[UrbanCode Deploy] Connection Successful...");
                         ok("Success");

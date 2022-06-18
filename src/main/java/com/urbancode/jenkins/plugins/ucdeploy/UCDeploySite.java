@@ -53,6 +53,9 @@ public class UCDeploySite implements Serializable {
 
     private boolean trustAllCerts;
 
+    private boolean alwaysCreateNewClient;
+    
+
     public static DefaultHttpClient client;
 
     /**
@@ -76,13 +79,15 @@ public class UCDeploySite implements Serializable {
             String url,
             String user,
             Secret password,
-            boolean trustAllCerts)
+            boolean trustAllCerts,
+            boolean alwaysCreateNewClient)
     {
         this.profileName = profileName;
         this.url = url;
         this.user = user;
         this.password = password;
         this.trustAllCerts = trustAllCerts;
+        this.alwaysCreateNewClient = alwaysCreateNewClient;
         client = UDRestClient.createHttpClient(user, password.getPlainText(), trustAllCerts);
     }
 
@@ -101,15 +106,16 @@ public class UCDeploySite implements Serializable {
             String url,
             String user,
             String password,
-            boolean trustAllCerts)
+            boolean trustAllCerts,
+            boolean alwaysCreateNewClient)
     {
-        this(profileName, url, user, Secret.fromString(password), trustAllCerts);
+        this(profileName, url, user, Secret.fromString(password), trustAllCerts, alwaysCreateNewClient);
     }
 
     public DefaultHttpClient getClient() {
         log.info("[UrbanCode Deploy] getClient() starts...");
-        if (client == null) {
-            log.info("Client was null...");
+        if (client == null || alwaysCreateNewClient == true) {
+            log.info("Client was null or alwaysCreateNewClient == true");
             client = UDRestClient.createHttpClient(user, password.getPlainText(), trustAllCerts);
         }
         log.info("[UrbanCode Deploy] getClient() end...");
@@ -249,6 +255,15 @@ public class UCDeploySite implements Serializable {
     @DataBoundSetter
     public void setTrustAllCerts(boolean trustAllCerts) {
         this.trustAllCerts = trustAllCerts;
+    }
+
+    public boolean isAlwaysCreateNewClient() {
+        return alwaysCreateNewClient;
+    }
+
+    @DataBoundSetter
+    public void setAlwaysCreateNewClient(boolean alwaysCreateNewClient) {
+        this.alwaysCreateNewClient = alwaysCreateNewClient;
     }
 
     /**
