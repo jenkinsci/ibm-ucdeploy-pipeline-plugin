@@ -169,10 +169,11 @@ public class VersionHelper {
             String[] includes = splitFiles(envVars.expand(pushBlock.getFileIncludePatterns()));
             String[] excludes = splitFiles(envVars.expand(pushBlock.getFileExcludePatterns()));
             String[] extensions = splitFiles(envVars.expand(pushBlock.getExtensions()));
-            Charset charset = null;
-            if (envVars.expand(pushBlock.getCharset()) != "" && envVars.expand(pushBlock.getCharset()) != null) {
-                listener.getLogger().println("Charset is provided..." + envVars.expand(pushBlock.getCharset()));
-                charset = Charset.forName(envVars.expand(pushBlock.getCharset()));
+            String charsetString = envVars.expand(pushBlock.getCharset());
+            Charset charset;
+            if (!charsetString.isBlank()) {
+                listener.getLogger().println("Charset is provided... " + charsetString);
+                charset = Charset.forName(charsetString);
             }
             listener.getLogger().println("Uploading files to version '" + version + "' on component '" + componentName + "'");
             try {
