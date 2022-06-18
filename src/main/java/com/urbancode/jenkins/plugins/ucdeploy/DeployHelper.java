@@ -208,8 +208,8 @@ public class DeployHelper {
         }
 
         public String getMethod(String uri) throws Exception{
-            log.info("[UrbanCode Deploy] uri: " + uri));
-            String result ="";
+            log.info("[UrbanCode Deploy] uri: " + uri);
+            String result = "";
             HttpGet method = new HttpGet(uri);
             try {
                 HttpResponse response = UCDeploySite.client.execute(method);

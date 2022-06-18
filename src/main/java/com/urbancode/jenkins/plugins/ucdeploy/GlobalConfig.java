@@ -138,7 +138,7 @@ public class GlobalConfig extends JobProperty<Job<?, ?>> {
                 @Override
                 protected void check() throws IOException, ServletException {
                     try {
-                        log.info("[UrbanCode Deploy] Starting Test Connection...")
+                        log.info("[UrbanCode Deploy] Starting Test Connection...");
                         log.debug("{profileName: " + profileName + ", url: " + url + ", user: " + user + ", password: " + password + ", trustAllCerts: " + trustAllCerts + "}");
                         UCDeploySite site = new UCDeploySite(profileName, url, user, password, trustAllCerts);
                         site.verifyConnection();
