@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.nio.charset.Charset;
 
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jettison.json.JSONArray;
@@ -167,10 +168,13 @@ public class VersionHelper {
             }
             String[] includes = splitFiles(envVars.expand(pushBlock.getFileIncludePatterns()));
             String[] excludes = splitFiles(envVars.expand(pushBlock.getFileExcludePatterns()));
+            String[] extensions = splitFiles(envVars.expand(pushBlock.getExtensions()));
+            Charset charset = Charset.forName(envVars.expand(pushBlock.getCharset()));
+
             listener.getLogger().println("Uploading files to version '" + version + "' on component '" + componentName + "'");
             try {
                 //versionId = verClient.createVersion(componentName, version, envVars.expand(pushBlock.getPushDescription()));
-                versionId = verClient.createAndAddVersionFiles(componentName, version, envVars.expand(pushBlock.getPushDescription()), base, "", includes, excludes, true, true, null, null);
+                versionId = verClient.createAndAddVersionFiles(componentName, version, envVars.expand(pushBlock.getPushDescription()), base, "", includes, excludes, true, true, charset, extensions);
             }
             catch (Exception ex) {
                 throw new AbortException("Failed to create component version: " + ex.getMessage());

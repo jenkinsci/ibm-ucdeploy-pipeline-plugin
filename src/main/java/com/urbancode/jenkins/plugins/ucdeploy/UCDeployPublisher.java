@@ -249,6 +249,26 @@ public class UCDeployPublisher extends Builder implements SimpleBuildStep {
         return fileExcludePatterns;
     }
 
+    public String getExtensions() {
+        String extensions = null;
+
+        if (getDelivery() != null && getDelivery() instanceof Push) {
+            extensions = ((Push)getDelivery()).getExtensions();
+        }
+
+        return extensions;
+    }
+
+    public String getCharset() {
+        String charset = null;
+
+        if (getDelivery() != null && getDelivery() instanceof Push) {
+            charset = ((Push)getDelivery()).getCharset();
+        }
+
+        return charset;
+    }
+
     public String getPushProperties() {
         String pushProperties = "";
 

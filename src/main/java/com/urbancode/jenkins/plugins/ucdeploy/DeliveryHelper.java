@@ -93,6 +93,8 @@ public class DeliveryHelper implements Serializable {
         private String baseDir;
         private String fileIncludePatterns;
         private String fileExcludePatterns;
+        private String extensions;
+        private String charset;
         private String pushProperties;
         private String pushDescription;
         private Boolean pushIncremental;
@@ -103,6 +105,8 @@ public class DeliveryHelper implements Serializable {
             String baseDir,
             String fileIncludePatterns,
             String fileExcludePatterns,
+            String extensions,
+            String charset,
             String pushProperties,
             String pushDescription,
             Boolean pushIncremental)
@@ -112,6 +116,8 @@ public class DeliveryHelper implements Serializable {
             this.baseDir = baseDir;
             this.fileIncludePatterns = fileIncludePatterns;
             this.fileExcludePatterns = fileExcludePatterns;
+            this.extensions = extensions;
+            this.charset = charset;
             this.pushProperties = pushProperties;
             this.pushDescription = pushDescription;
             this.pushIncremental = pushIncremental;
@@ -151,6 +157,14 @@ public class DeliveryHelper implements Serializable {
             else {
                 return "";
             }
+        }
+
+        public String getExtensions() {
+            return extensions;
+        }
+
+        public String getCharset() {
+            return charset;
         }
 
         public String getPushProperties() {

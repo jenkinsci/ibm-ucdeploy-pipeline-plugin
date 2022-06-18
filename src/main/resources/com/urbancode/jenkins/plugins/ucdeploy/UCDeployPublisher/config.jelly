@@ -77,6 +77,12 @@
             <f:entry field="fileExcludePatterns" title="Exclude" help="${helpURL}/create/delivery/push/excludes.html">
               <f:textarea/>
             </f:entry>
+            <f:entry field="extensions" title="Extensions of files to Convert field" help="${helpURL}/create/delivery/push/extensions.html">
+              <f:textarea/>
+            </f:entry>
+            <f:entry field="charset" title="Charset" help="${helpURL}/create/delivery/push/charset.html">
+              <f:textarea/>
+            </f:entry>
             <f:entry field="pushProperties" title="Version Properties" help="${helpURL}/create/delivery/push/properties.html">
               <f:textarea/>
             </f:entry>
