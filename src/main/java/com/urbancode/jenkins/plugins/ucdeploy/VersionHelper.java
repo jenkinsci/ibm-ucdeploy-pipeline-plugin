@@ -171,7 +171,7 @@ public class VersionHelper {
             String[] extensions = splitFiles(envVars.expand(pushBlock.getExtensions()));
             Charset charset = null;
             if (envVars.expand(pushBlock.getCharset()) != "") {
-                listener.getLogger().println("Charset is provided...");
+                listener.getLogger().println("Charset is provided..." + envVars.expand(pushBlock.getCharset()));
                 charset = Charset.forName(envVars.expand(pushBlock.getCharset()));
             }
             listener.getLogger().println("Uploading files to version '" + version + "' on component '" + componentName + "'");
