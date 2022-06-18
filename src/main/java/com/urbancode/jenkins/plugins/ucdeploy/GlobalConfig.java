@@ -139,15 +139,15 @@ public class GlobalConfig extends JobProperty<Job<?, ?>> {
                 protected void check() throws IOException, ServletException {
                     try {
                         log.info("[UrbanCode Deploy] Starting Test Connection...");
-                        log.debug("{profileName: " + profileName + ", url: " + url + ", user: " + user + ", password: " + password + ", trustAllCerts: " + trustAllCerts + "}");
+                        log.info("{profileName: " + profileName + ", url: " + url + ", user: " + user + ", password: " + password + ", trustAllCerts: " + trustAllCerts + "}");
                         UCDeploySite site = new UCDeploySite(profileName, url, user, password, trustAllCerts);
                         site.verifyConnection();
                         log.info("[UrbanCode Deploy] Connection Successful...");
                         ok("Success");
                     }
                     catch (Exception e) {
-                        log.error("[UrbanCode Deploy] Connection Failed...");
-                        log.error(e.getMessage());
+                        log.info("[UrbanCode Deploy] Connection Failed...");
+                        log.info(e.getMessage());
                         error(e.getMessage());
                     }
                 }

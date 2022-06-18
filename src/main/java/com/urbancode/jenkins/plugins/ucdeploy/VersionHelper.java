@@ -140,18 +140,23 @@ public class VersionHelper {
 
         // create component
         if (versionBlock.createComponentChecked()) {
+            log.info("[UrbanCode Deploy] create component starts...");
             componentHelper.createComponent(componentName,
                                             versionBlock.getCreateComponent(),
                                             versionBlock.getDelivery());
+            log.info("[UrbanCode Deploy] create component ends...");
         }
 
         // tag component
         if (componentTag != null && !componentTag.isEmpty()) {
+            log.info("[UrbanCode Deploy] tag component starts...");
             componentHelper.addTag(componentName, componentTag);
+            log.info("[UrbanCode Deploy] tag component ends...");
         }
 
         // create version and upload files
         if (versionBlock.getDelivery().getDeliveryType() == DeliveryBlock.DeliveryType.Push) {
+            log.info("[UrbanCode Deploy] create version and upload files starts...");
             Push pushBlock = (Push)versionBlock.getDelivery();
             String version = envVars.expand(pushBlock.getPushVersion());
             listener.getLogger().println("Creating new component version and Uploading files to version '" + version + "' on component '" + componentName +
@@ -195,20 +200,26 @@ public class VersionHelper {
             catch (Exception ex) {
                 listener.getLogger().println("[Warning] Failed to set version ID as environment variable.");
             }
-
+            log.info("[UrbanCode Deploy] create version and upload files ends...");
 
             // set version properties
             listener.getLogger().println("Setting properties for version '" + version + "' on component '" + componentName + "'");
+            log.info("[UrbanCode Deploy] set version properties starts...");
             setComponentVersionProperties(componentName,
                                           version,
                                           DeliveryBlock.mapProperties(envVars.expand(pushBlock.getPushProperties())));
+            log.info("[UrbanCode Deploy] set version properties ends...");
 
             // add link
             listener.getLogger().println("Creating component version link '" + linkName + "' to URL '" + linkUrl + "'");
             try {
+                log.info("[UrbanCode Deploy] add link starts...");
                 compClient.addComponentVersionLink(componentName, version, linkName, linkUrl);
+                log.info("[UrbanCode Deploy] add link ends...");
             }
             catch (Exception ex) {
+                log.info("[UrbanCode Deploy] add link failed...");
+                log.info("Failed to add a version link: " + ex.getMessage());
                 throw new AbortException("Failed to add a version link: " + ex.getMessage());
             }
         }
@@ -221,19 +232,27 @@ public class VersionHelper {
             listener.getLogger().println("Using runtime properties " + mappedProperties);
 
             try {
+                log.info("[UrbanCode Deploy] import version starts...");
                 compClient.importComponentVersions(componentName, mappedProperties);
+                log.info("[UrbanCode Deploy] import version ends...");
             }
             catch (IOException ex) {
+                log.info("[UrbanCode Deploy] import version failed...");
+                log.info("An error occurred while importing component versions on component '" + componentName + "' : " + ex.getMessage());
                 throw new AbortException("An error occurred while importing component versions on component '" + componentName +
                                          "' : " + ex.getMessage());
             }
             catch (JSONException ex) {
+                log.info("[UrbanCode Deploy] import version failed...");
+                log.info("An error occurred while creating JSON version import object : " + ex.getMessage());
                 throw new AbortException("An error occurred while creating JSON version import object : " + ex.getMessage());
             }
         }
 
         // invalid type
         else {
+            log.info("[UrbanCode Deploy] invalid type...");
+            log.info("Invalid Delivery Type: " + versionBlock.getDelivery().getDeliveryType());
             throw new AbortException("Invalid Delivery Type: " + versionBlock.getDelivery().getDeliveryType());
         }
     }
