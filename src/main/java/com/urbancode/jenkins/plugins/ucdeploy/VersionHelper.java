@@ -157,7 +157,7 @@ public class VersionHelper {
             }
 
             UUID versionId;
-            File base = new File(envVars.expand(pushBlock.getBaseDir());
+            File base = new File(envVars.expand(pushBlock.getBaseDir()));
             if (!base.exists()) {
                 throw new AbortException("Base artifact directory " + base.getAbsolutePath() + " does not exist");
             }
@@ -170,7 +170,7 @@ public class VersionHelper {
             listener.getLogger().println("Uploading files to version '" + version + "' on component '" + componentName + "'");
             try {
                 //versionId = verClient.createVersion(componentName, version, envVars.expand(pushBlock.getPushDescription()));
-                versionId = verClient.createAndAddVersionFiles(componentName, version, envVars.expand(pushBlock.getPushDescription()), base, "", includes, excludes, true, true, null, null)
+                versionId = verClient.createAndAddVersionFiles(componentName, version, envVars.expand(pushBlock.getPushDescription()), base, "", includes, excludes, true, true, null, null);
             }
             catch (Exception ex) {
                 throw new AbortException("Failed to create component version: " + ex.getMessage());
