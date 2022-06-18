@@ -171,11 +171,12 @@ public class VersionHelper {
             String[] excludes = splitFiles(envVars.expand(pushBlock.getFileExcludePatterns()));
             String[] extensions = splitFiles(envVars.expand(pushBlock.getExtensions()));
             String charsetString = envVars.expand(pushBlock.getCharset());
-            Charset charset;
+            Charset charset = Charset.defaultCharset();
             if (!StringUtils.isBlank(charsetString)) {
                 listener.getLogger().println("Charset is provided... " + charsetString);
                 charset = Charset.forName(charsetString);
             }
+            listener.getLogger().println("Charset Display Name: " + charset.displayName());
             listener.getLogger().println("Uploading files to version '" + version + "' on component '" + componentName + "'");
             try {
                 //versionId = verClient.createVersion(componentName, version, envVars.expand(pushBlock.getPushDescription()));
