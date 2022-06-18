@@ -160,11 +160,21 @@ public class DeliveryHelper implements Serializable {
         }
 
         public String getExtensions() {
-            return extensions;
+            if (extensions != null) {
+                return extensions;
+            }
+            else {
+                return "";
+            }
         }
 
         public String getCharset() {
-            return charset;
+            if (charset != null) {
+                return charset;
+            }
+            else {
+                return "";
+            }
         }
 
         public String getPushProperties() {

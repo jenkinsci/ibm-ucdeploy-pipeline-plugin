@@ -250,7 +250,7 @@ public class UCDeployPublisher extends Builder implements SimpleBuildStep {
     }
 
     public String getExtensions() {
-        String extensions = null;
+        String extensions = "";
 
         if (getDelivery() != null && getDelivery() instanceof Push) {
             extensions = ((Push)getDelivery()).getExtensions();
@@ -260,7 +260,7 @@ public class UCDeployPublisher extends Builder implements SimpleBuildStep {
     }
 
     public String getCharset() {
-        String charset = null;
+        String charset = "";
 
         if (getDelivery() != null && getDelivery() instanceof Push) {
             charset = ((Push)getDelivery()).getCharset();
