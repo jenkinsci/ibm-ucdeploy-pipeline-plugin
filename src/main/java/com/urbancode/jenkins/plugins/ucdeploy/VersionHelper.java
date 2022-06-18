@@ -170,7 +170,7 @@ public class VersionHelper {
             String[] excludes = splitFiles(envVars.expand(pushBlock.getFileExcludePatterns()));
             String[] extensions = splitFiles(envVars.expand(pushBlock.getExtensions()));
             Charset charset = null;
-            if (envVars.expand(pushBlock.getCharset()) != "") {
+            if (envVars.expand(pushBlock.getCharset()) != "" && envVars.expand(pushBlock.getCharset()) != null) {
                 listener.getLogger().println("Charset is provided..." + envVars.expand(pushBlock.getCharset()));
                 charset = Charset.forName(envVars.expand(pushBlock.getCharset()));
             }
