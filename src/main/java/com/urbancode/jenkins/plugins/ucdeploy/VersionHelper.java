@@ -31,6 +31,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 import com.urbancode.jenkins.plugins.ucdeploy.ComponentHelper.CreateComponentBlock;
 import com.urbancode.jenkins.plugins.ucdeploy.DeliveryHelper.DeliveryBlock;
@@ -171,7 +172,7 @@ public class VersionHelper {
             String[] extensions = splitFiles(envVars.expand(pushBlock.getExtensions()));
             String charsetString = envVars.expand(pushBlock.getCharset());
             Charset charset;
-            if (!charsetString.isBlank()) {
+            if (!StringUtils.isBlank(charsetString)) {
                 listener.getLogger().println("Charset is provided... " + charsetString);
                 charset = Charset.forName(charsetString);
             }
