@@ -30,12 +30,16 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class stores the global list of all user configured site objects
  *
  */
 public class GlobalConfig extends JobProperty<Job<?, ?>> {
+
+    public static final Logger log = LoggerFactory.getLogger(GlobalConfig.class);
 
 
     /**
@@ -124,6 +128,7 @@ public class GlobalConfig extends JobProperty<Job<?, ?>> {
         public void doTestConnection(
                 StaplerRequest req,
                 StaplerResponse rsp,
+                @QueryParameter("profileName") final String profileName,
                 @QueryParameter("url") final String url,
                 @QueryParameter("user") final String user,
                 @QueryParameter("password") final String password,
@@ -133,11 +138,16 @@ public class GlobalConfig extends JobProperty<Job<?, ?>> {
                 @Override
                 protected void check() throws IOException, ServletException {
                     try {
-                        UCDeploySite site = new UCDeploySite(null, url, user, password, trustAllCerts);
+                        log.info("[UrbanCode Deploy] Starting Test Connection...")
+                        log.debug("{profileName: " + profileName + ", url: " + url + ", user: " + user + ", password: " + password + ", trustAllCerts: " + trustAllCerts + "}");
+                        UCDeploySite site = new UCDeploySite(profileName, url, user, password, trustAllCerts);
                         site.verifyConnection();
+                        log.info("[UrbanCode Deploy] Connection Successful...");
                         ok("Success");
                     }
                     catch (Exception e) {
+                        log.error("[UrbanCode Deploy] Connection Failed...");
+                        log.error(e.getMessage());
                         error(e.getMessage());
                     }
                 }

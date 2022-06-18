@@ -23,6 +23,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpEntity;
+import org.apache.http.util.EntityUtils;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -105,12 +107,12 @@ public class UCDeploySite implements Serializable {
     }
 
     public DefaultHttpClient getClient() {
-        log.info("[UCD] client = UDRestClient.createHttpClient(user, password.toString(), trustAllCerts) Start...");
+        log.info("[UrbanCode Deploy] getClient() starts...");
         if (client == null) {
             log.info("Client was null...");
             client = UDRestClient.createHttpClient(user, password.getPlainText(), trustAllCerts);
         }
-        log.info("[UCD] client = UDRestClient.createHttpClient(user, password.toString(), trustAllCerts) End...");
+        log.info("[UrbanCode Deploy] getClient() end...");
         return client;
     }
 
@@ -260,17 +262,22 @@ public class UCDeploySite implements Serializable {
     }
 
     public void executeJSONGet(URI uri) throws Exception {
-        String result = null;
+        log.info("[UrbanCode Deploy] uri: " + uri.toString());
         HttpClient client = getClient();
         HttpGet method = new HttpGet(uri.toString());
         try {
             HttpResponse response = client.execute(method);
+            
             int responseCode = response.getStatusLine().getStatusCode();
             if (responseCode == 401) {
                 throw new Exception("Error connecting to IBM UrbanCode Deploy: Invalid user and/or password");
             }
             else if (responseCode != 200) {
                 throw new Exception("Error connecting to IBM UrbanCode Deploy: " + responseCode + "using URI: " + uri.toString());
+            }
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                log.info("[UrbanCode Deploy] response: " + EntityUtils.toString(entity));
             }
         }
         finally {

@@ -49,6 +49,9 @@ import com.urbancode.jenkins.plugins.ucdeploy.ProcessHelper.CreateProcessBlock;
 import com.urbancode.ud.client.ApplicationClient;
 import javax.net.ssl.HttpsURLConnection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * This class is used to provide access to the UrbanCode Deploy rest client
  * and run component version related rest calls
@@ -56,6 +59,7 @@ import javax.net.ssl.HttpsURLConnection;
  */
 @SuppressWarnings("deprecation") // Triggered by DefaultHttpClient
 public class DeployHelper {
+    public static final Logger log = LoggerFactory.getLogger(DeployHelper.class);
     private ApplicationClient appClient;
     private TaskListener listener;
     private EnvVars envVars;
@@ -204,6 +208,7 @@ public class DeployHelper {
         }
 
         public String getMethod(String uri) throws Exception{
+            log.info("[UrbanCode Deploy] uri: " + uri));
             String result ="";
             HttpGet method = new HttpGet(uri);
             try {
@@ -219,7 +224,6 @@ public class DeployHelper {
                 if (entity != null) {
                     // return it as a String
                     result = EntityUtils.toString(entity);
-                    System.out.println(result);
                 }
             }catch (Exception e) {
                 e.printStackTrace();
@@ -227,6 +231,7 @@ public class DeployHelper {
             finally {
                 method.releaseConnection();
             }
+            log.info("[UrbanCode Deploy] result: " + result);
             return result;
         }
 

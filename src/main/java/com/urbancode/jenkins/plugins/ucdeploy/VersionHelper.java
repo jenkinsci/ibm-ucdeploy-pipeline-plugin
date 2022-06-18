@@ -42,6 +42,9 @@ import com.urbancode.ud.client.ComponentClient;
 import com.urbancode.ud.client.PropertyClient;
 import com.urbancode.ud.client.VersionClient;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * This class provides the structure and function around version control in IBM
  * UrbanCode Deploy via uDeployRestClient abstracted REST calls import
@@ -50,6 +53,7 @@ import com.urbancode.ud.client.VersionClient;
  */
 @SuppressWarnings("deprecation") // Triggered by DefaultHttpClient
 public class VersionHelper {
+    public static final Logger log = LoggerFactory.getLogger(VersionHelper.class);
     private ApplicationClient appClient;
     private ComponentClient compClient;
     private PropertyClient propClient;
@@ -146,11 +150,11 @@ public class VersionHelper {
             componentHelper.addTag(componentName, componentTag);
         }
 
-        // create version
+        // create version and upload files
         if (versionBlock.getDelivery().getDeliveryType() == DeliveryBlock.DeliveryType.Push) {
             Push pushBlock = (Push)versionBlock.getDelivery();
             String version = envVars.expand(pushBlock.getPushVersion());
-            listener.getLogger().println("Creating new component version '" + version + "' on component '" + componentName +
+            listener.getLogger().println("Creating new component version and Uploading files to version '" + version + "' on component '" + componentName +
                                          "'");
             if (version == null || version.isEmpty() || version.length() > 255) {
                 throw new AbortException("Failed to create version '" + version + "' in UrbanCode Deploy. UrbanCode Deploy " +
@@ -175,18 +179,15 @@ public class VersionHelper {
             if (!StringUtils.isBlank(charsetString)) {
                 listener.getLogger().println("Charset is provided... " + charsetString);
                 charset = Charset.forName(charsetString);
+                listener.getLogger().println("Charset Display Name: " + charset.displayName());
             }
-            listener.getLogger().println("Charset Display Name: " + charset.displayName());
-            listener.getLogger().println("Uploading files to version '" + version + "' on component '" + componentName + "'");
             try {
-                //versionId = verClient.createVersion(componentName, version, envVars.expand(pushBlock.getPushDescription()));
                 versionId = verClient.createAndAddVersionFiles(componentName, version, envVars.expand(pushBlock.getPushDescription()), base, "", includes, excludes, true, true, charset, extensions);
             }
             catch (Exception ex) {
-                throw new AbortException("Failed to create component version: " + ex.getMessage());
+                throw new AbortException("Failed to create component version and uploading files: " + ex.getMessage());
             }
-            listener.getLogger().println("Successfully created component version with UUID '" + versionId.toString() + "'");
-            listener.getLogger().println("Successfully uploaded files");
+            listener.getLogger().println("Successfully created component version with UUID '" + versionId.toString() + "' and uploaded files.");
 
             try {
                 putEnvVar(componentName + "_VersionId", versionId.toString());
@@ -195,14 +196,6 @@ public class VersionHelper {
                 listener.getLogger().println("[Warning] Failed to set version ID as environment variable.");
             }
 
-            // upload files
-            
-            // uploadVersionFiles(envVars.expand(pushBlock.getBaseDir()),
-            //                    componentName,
-            //                    version,
-            //                    envVars.expand(pushBlock.getFileIncludePatterns()),
-            //                    envVars.expand(pushBlock.getFileExcludePatterns()));
-           
 
             // set version properties
             listener.getLogger().println("Setting properties for version '" + version + "' on component '" + componentName + "'");

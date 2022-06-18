@@ -26,7 +26,7 @@
               <f:repeatableDeleteButton/>
               <f:validateButton
                   title="${%Test Connection}" progress="${%Testing...}"
-                  method="testConnection" with="url,user,password,trustAllCerts"/>
+                  method="testConnection" with="profileName,url,user,password,trustAllCerts"/>
             </div>
           </f:entry>
         </div>
