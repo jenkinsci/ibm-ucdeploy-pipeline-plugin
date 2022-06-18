@@ -81,7 +81,7 @@ public class UCDeploySite implements Serializable {
         this.user = user;
         this.password = password;
         this.trustAllCerts = trustAllCerts;
-        client = UDRestClient.createHttpClient(user, password.toString(), trustAllCerts);
+        client = UDRestClient.createHttpClient(user, password.getPlainText(), trustAllCerts);
     }
 
     /**
@@ -106,13 +106,13 @@ public class UCDeploySite implements Serializable {
 
     public DefaultHttpClient getClient() {
         log.info("[UCD] client = UDRestClient.createHttpClient(user, password.toString(), trustAllCerts) Start...");
-        client = UDRestClient.createHttpClient(user, password.toString(), trustAllCerts);
+        client = UDRestClient.createHttpClient(user, password.getPlainText(), trustAllCerts);
         log.info("[UCD] client = UDRestClient.createHttpClient(user, password.toString(), trustAllCerts) End...");
         return client;
     }
 
     public DefaultHttpClient getTempClient(String tempUser, Secret tempPassword) {
-        return UDRestClient.createHttpClient(tempUser, tempPassword.toString(), trustAllCerts);
+        return UDRestClient.createHttpClient(tempUser, tempPassword.getPlainText(), trustAllCerts);
     }
 
     /**
