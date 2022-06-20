@@ -510,12 +510,16 @@ public class DeployHelper {
                 String uri2 = ucdUrl.toString()+"/property/propSheet/applications%26"+applicationId+"%26propSheet."+versionCount;
                 String data2 = deployBlock.getMethod(uri2);
                 JSONObject PropertyObject = new JSONObject(data2);
-                JSONArray array1 = new JSONArray(PropertyObject.getString("properties"));  
-                for(int i=0; i < array1.length(); i++)   
-                {  
-                    if(array1.getJSONObject(i).getString("secure") == "false"){
-                        listener.getLogger().println("Env : "+array1.getJSONObject(i).getString("name")+"="+array1.getJSONObject(i).getString("value"));
-                        deployBlock.createGlobalEnvironmentVariables(array1.getJSONObject(i).getString("name"),array1.getJSONObject(i).getString("value"));
+                JSONArray array1 = new JSONArray(PropertyObject.getString("properties"));
+                boolean isSkipProps = UCDeploySite.skipProps;
+                listener.getLogger().println("********** isSkipProps value is " + isSkipProps);
+                if (isSkipProps == false) {
+                    for(int i=0; i < array1.length(); i++)   
+                    {  
+                        if(array1.getJSONObject(i).getString("secure") == "false"){
+                            listener.getLogger().println("Env : "+array1.getJSONObject(i).getString("name")+"="+array1.getJSONObject(i).getString("value"));
+                            deployBlock.createGlobalEnvironmentVariables(array1.getJSONObject(i).getString("name"),array1.getJSONObject(i).getString("value"));
+                        }
                     }
                 }
             }
