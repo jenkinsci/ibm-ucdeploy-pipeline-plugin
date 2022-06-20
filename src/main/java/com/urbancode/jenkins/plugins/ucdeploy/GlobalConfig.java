@@ -141,7 +141,7 @@ public class GlobalConfig extends JobProperty<Job<?, ?>> {
                     try {
                         log.info("[UrbanCode Deploy] Starting Test Connection...");
                         log.info("{profileName: " + profileName + ", url: " + url + ", user: " + user + ", trustAllCerts: " + trustAllCerts + ", alwaysCreateNewClient: " + alwaysCreateNewClient + "}");
-                        UCDeploySite site = new UCDeploySite(profileName, url, user, password, trustAllCerts, alwaysCreateNewClient);
+                        UCDeploySite site = new UCDeploySite(profileName, url, user, password, trustAllCerts, false, alwaysCreateNewClient);
                         site.verifyConnection();
                         log.info("[UrbanCode Deploy] Connection Successful...");
                         ok("Success");
