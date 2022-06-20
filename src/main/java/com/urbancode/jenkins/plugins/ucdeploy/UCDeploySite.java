@@ -80,6 +80,7 @@ public class UCDeploySite implements Serializable {
             String user,
             Secret password,
             boolean trustAllCerts,
+            boolean skipProps,
             boolean alwaysCreateNewClient)
     {
         this.profileName = profileName;
@@ -87,6 +88,7 @@ public class UCDeploySite implements Serializable {
         this.user = user;
         this.password = password;
         this.trustAllCerts = trustAllCerts;
+        this.skipProps = skipProps;
         this.alwaysCreateNewClient = alwaysCreateNewClient;
         client = UDRestClient.createHttpClient(user, password.getPlainText(), trustAllCerts);
     }
@@ -107,9 +109,10 @@ public class UCDeploySite implements Serializable {
             String user,
             String password,
             boolean trustAllCerts,
+            boolean skipProps
             boolean alwaysCreateNewClient)
     {
-        this(profileName, url, user, Secret.fromString(password), trustAllCerts, alwaysCreateNewClient);
+        this(profileName, url, user, Secret.fromString(password), trustAllCerts, skipProps, alwaysCreateNewClient);
     }
 
     public DefaultHttpClient getClient() {
@@ -255,6 +258,25 @@ public class UCDeploySite implements Serializable {
     @DataBoundSetter
     public void setTrustAllCerts(boolean trustAllCerts) {
         this.trustAllCerts = trustAllCerts;
+    }
+    
+    /**
+     * Gets skipProps
+     *
+     * @return skipProps
+     */
+    public boolean isSkipProps() {
+        return skipProps;
+    }
+
+    /**
+     * Sets skipProps
+     *
+     * @param skipProps
+     */
+    @DataBoundSetter
+    public void setSkipProps(boolean skipProps) {
+        this.skipProps = skipProps;
     }
 
     public boolean isAlwaysCreateNewClient() {
