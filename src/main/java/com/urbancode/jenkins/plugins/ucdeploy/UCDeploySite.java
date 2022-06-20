@@ -109,7 +109,7 @@ public class UCDeploySite implements Serializable {
             String user,
             String password,
             boolean trustAllCerts,
-            boolean skipProps
+            boolean skipProps,
             boolean alwaysCreateNewClient)
     {
         this(profileName, url, user, Secret.fromString(password), trustAllCerts, skipProps, alwaysCreateNewClient);
