@@ -65,11 +65,12 @@ public class DeployHelper {
     private EnvVars envVars;
     private URI ucdUrl;
 
-    public DeployHelper(URI ucdUrl, DefaultHttpClient httpClient, TaskListener listener, EnvVars envVars) {
+    public DeployHelper(URI ucdUrl, DefaultHttpClient httpClient, TaskListener listener, EnvVars envVars, boolean skipProps) {
         this.ucdUrl = ucdUrl;
     	appClient = new ApplicationClient(ucdUrl, httpClient);
         this.listener = listener;
         this.envVars = envVars;
+        this.skipProps = skipProps;
     }
 
     public static class DeployBlock {
@@ -510,12 +511,15 @@ public class DeployHelper {
                 String uri2 = ucdUrl.toString()+"/property/propSheet/applications%26"+applicationId+"%26propSheet."+versionCount;
                 String data2 = deployBlock.getMethod(uri2);
                 JSONObject PropertyObject = new JSONObject(data2);
-                JSONArray array1 = new JSONArray(PropertyObject.getString("properties"));  
-                for(int i=0; i < array1.length(); i++)   
-                {  
-                    if(array1.getJSONObject(i).getString("secure") == "false"){
-                        listener.getLogger().println("Env : "+array1.getJSONObject(i).getString("name")+"="+array1.getJSONObject(i).getString("value"));
-                        deployBlock.createGlobalEnvironmentVariables(array1.getJSONObject(i).getString("name"),array1.getJSONObject(i).getString("value"));
+                JSONArray array1 = new JSONArray(PropertyObject.getString("properties"));
+                listener.getLogger().println("********** isSkipProps value is " + skipProps);
+                if (skipProps == false) {
+                    for(int i=0; i < array1.length(); i++)
+                    {  
+                        if(array1.getJSONObject(i).getString("secure") == "false"){
+                            listener.getLogger().println("Env : "+array1.getJSONObject(i).getString("name")+"="+array1.getJSONObject(i).getString("value"));
+                            deployBlock.createGlobalEnvironmentVariables(array1.getJSONObject(i).getString("name"),array1.getJSONObject(i).getString("value"));
+                        }
                     }
                 }
             }

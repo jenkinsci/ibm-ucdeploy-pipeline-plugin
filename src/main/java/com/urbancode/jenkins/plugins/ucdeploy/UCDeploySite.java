@@ -52,6 +52,8 @@ public class UCDeploySite implements Serializable {
     private Secret password;
 
     private boolean trustAllCerts;
+    
+    public boolean skipProps;
 
     private boolean alwaysCreateNewClient;
     

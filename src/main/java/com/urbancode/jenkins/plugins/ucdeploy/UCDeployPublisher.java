@@ -562,7 +562,7 @@ public class UCDeployPublisher extends Builder implements SimpleBuildStep {
         }
 
         if (deployChecked()) {
-            DeployHelper deployHelper = new DeployHelper(udSite.getUri(), udClient, listener, envVars);
+            DeployHelper deployHelper = new DeployHelper(udSite.getUri(), udClient, listener, envVars, udSite.isSkipProps());
 
             /* Throw AbortException so that Jenkins will mark job as faulty */
             try {
