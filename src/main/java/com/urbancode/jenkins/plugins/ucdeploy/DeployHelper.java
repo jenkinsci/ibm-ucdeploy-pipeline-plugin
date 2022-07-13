@@ -64,6 +64,7 @@ public class DeployHelper {
     private TaskListener listener;
     private EnvVars envVars;
     private URI ucdUrl;
+    private boolean skipProps;
 
     public DeployHelper(URI ucdUrl, DefaultHttpClient httpClient, TaskListener listener, EnvVars envVars, boolean skipProps) {
         this.ucdUrl = ucdUrl;
