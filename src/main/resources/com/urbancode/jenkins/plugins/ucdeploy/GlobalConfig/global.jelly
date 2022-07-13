@@ -21,7 +21,7 @@
           <f:entry title="Trust All Certificates" help="${helpURL}/global/trust.html">
             <f:checkbox name="trustAllCerts" checked="${site.trustAllCerts}"/>
           </f:entry>
-          <f:entry title="Skip Application Properties import" help="${helpURL}/global/trust.html">
+          <f:entry title="Skip Application Properties import" help="${helpURL}/global/skipProps.html">
             <f:checkbox name="skipProps" checked="${site.skipProps}"/>
           </f:entry>
           <f:entry title="Always Create New Client" help="${helpURL}/global/alwaysCreateNewClient.html">
