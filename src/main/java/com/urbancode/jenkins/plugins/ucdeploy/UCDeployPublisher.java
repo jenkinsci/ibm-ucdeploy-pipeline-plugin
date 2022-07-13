@@ -249,6 +249,26 @@ public class UCDeployPublisher extends Builder implements SimpleBuildStep {
         return fileExcludePatterns;
     }
 
+    public String getExtensions() {
+        String extensions = "";
+
+        if (getDelivery() != null && getDelivery() instanceof Push) {
+            extensions = ((Push)getDelivery()).getExtensions();
+        }
+
+        return extensions;
+    }
+
+    public String getCharset() {
+        String charset = "";
+
+        if (getDelivery() != null && getDelivery() instanceof Push) {
+            charset = ((Push)getDelivery()).getCharset();
+        }
+
+        return charset;
+    }
+
     public String getPushProperties() {
         String pushProperties = "";
 
@@ -542,7 +562,7 @@ public class UCDeployPublisher extends Builder implements SimpleBuildStep {
         }
 
         if (deployChecked()) {
-            DeployHelper deployHelper = new DeployHelper(udSite.getUri(), udClient, listener, envVars);
+            DeployHelper deployHelper = new DeployHelper(udSite.getUri(), udClient, listener, envVars, udSite.isSkipProps());
 
             /* Throw AbortException so that Jenkins will mark job as faulty */
             try {

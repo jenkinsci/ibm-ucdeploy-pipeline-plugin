@@ -23,9 +23,14 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpEntity;
+import org.apache.http.util.EntityUtils;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is used to configure individual sites which are
@@ -34,6 +39,7 @@ import org.kohsuke.stapler.DataBoundSetter;
  */
 @SuppressWarnings("deprecation") // Triggered by DefaultHttpClient
 public class UCDeploySite implements Serializable {
+    public static final Logger log = LoggerFactory.getLogger(UCDeploySite.class);
 
     private static final long serialVersionUID = -8723534991244260459L;
 
@@ -46,6 +52,11 @@ public class UCDeploySite implements Serializable {
     private Secret password;
 
     private boolean trustAllCerts;
+    
+    public boolean skipProps;
+
+    private boolean alwaysCreateNewClient;
+    
 
     public static DefaultHttpClient client;
 
@@ -70,14 +81,18 @@ public class UCDeploySite implements Serializable {
             String url,
             String user,
             Secret password,
-            boolean trustAllCerts)
+            boolean trustAllCerts,
+            boolean skipProps,
+            boolean alwaysCreateNewClient)
     {
         this.profileName = profileName;
         this.url = url;
         this.user = user;
         this.password = password;
         this.trustAllCerts = trustAllCerts;
-        client = UDRestClient.createHttpClient(user, password.toString(), trustAllCerts);
+        this.skipProps = skipProps;
+        this.alwaysCreateNewClient = alwaysCreateNewClient;
+        client = UDRestClient.createHttpClient(user, password.getPlainText(), trustAllCerts);
     }
 
     /**
@@ -95,20 +110,25 @@ public class UCDeploySite implements Serializable {
             String url,
             String user,
             String password,
-            boolean trustAllCerts)
+            boolean trustAllCerts,
+            boolean skipProps,
+            boolean alwaysCreateNewClient)
     {
-        this(profileName, url, user, Secret.fromString(password), trustAllCerts);
+        this(profileName, url, user, Secret.fromString(password), trustAllCerts, skipProps, alwaysCreateNewClient);
     }
 
     public DefaultHttpClient getClient() {
-        if (client == null) {
-            client = UDRestClient.createHttpClient(user, password.toString(), trustAllCerts);
+        log.info("[UrbanCode Deploy] getClient() starts...");
+        if (client == null || alwaysCreateNewClient == true) {
+            log.info("Client was null or alwaysCreateNewClient == true");
+            client = UDRestClient.createHttpClient(user, password.getPlainText(), trustAllCerts);
         }
+        log.info("[UrbanCode Deploy] getClient() end...");
         return client;
     }
 
     public DefaultHttpClient getTempClient(String tempUser, Secret tempPassword) {
-        return UDRestClient.createHttpClient(tempUser, tempPassword.toString(), trustAllCerts);
+        return UDRestClient.createHttpClient(tempUser, tempPassword.getPlainText(), trustAllCerts);
     }
 
     /**
@@ -241,6 +261,34 @@ public class UCDeploySite implements Serializable {
     public void setTrustAllCerts(boolean trustAllCerts) {
         this.trustAllCerts = trustAllCerts;
     }
+    
+    /**
+     * Gets skipProps
+     *
+     * @return skipProps
+     */
+    public boolean isSkipProps() {
+        return skipProps;
+    }
+
+    /**
+     * Sets skipProps
+     *
+     * @param skipProps
+     */
+    @DataBoundSetter
+    public void setSkipProps(boolean skipProps) {
+        this.skipProps = skipProps;
+    }
+
+    public boolean isAlwaysCreateNewClient() {
+        return alwaysCreateNewClient;
+    }
+
+    @DataBoundSetter
+    public void setAlwaysCreateNewClient(boolean alwaysCreateNewClient) {
+        this.alwaysCreateNewClient = alwaysCreateNewClient;
+    }
 
     /**
      * Test whether the client can connect to the UCD site
@@ -253,17 +301,22 @@ public class UCDeploySite implements Serializable {
     }
 
     public void executeJSONGet(URI uri) throws Exception {
-        String result = null;
+        log.info("[UrbanCode Deploy] uri: " + uri.toString());
         HttpClient client = getClient();
         HttpGet method = new HttpGet(uri.toString());
         try {
             HttpResponse response = client.execute(method);
+            
             int responseCode = response.getStatusLine().getStatusCode();
             if (responseCode == 401) {
                 throw new Exception("Error connecting to IBM UrbanCode Deploy: Invalid user and/or password");
             }
             else if (responseCode != 200) {
                 throw new Exception("Error connecting to IBM UrbanCode Deploy: " + responseCode + "using URI: " + uri.toString());
+            }
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                log.info("[UrbanCode Deploy] response: " + EntityUtils.toString(entity));
             }
         }
         finally {

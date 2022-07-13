@@ -30,12 +30,16 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class stores the global list of all user configured site objects
  *
  */
 public class GlobalConfig extends JobProperty<Job<?, ?>> {
+
+    public static final Logger log = LoggerFactory.getLogger(GlobalConfig.class);
 
 
     /**
@@ -124,20 +128,27 @@ public class GlobalConfig extends JobProperty<Job<?, ?>> {
         public void doTestConnection(
                 StaplerRequest req,
                 StaplerResponse rsp,
+                @QueryParameter("profileName") final String profileName,
                 @QueryParameter("url") final String url,
                 @QueryParameter("user") final String user,
                 @QueryParameter("password") final String password,
-                @QueryParameter("trustAllCerts") final boolean trustAllCerts)
+                @QueryParameter("trustAllCerts") final boolean trustAllCerts,
+                @QueryParameter("alwaysCreateNewClient") final boolean alwaysCreateNewClient)
         throws IOException, ServletException {
             new FormFieldValidator(req, rsp, true) {
                 @Override
                 protected void check() throws IOException, ServletException {
                     try {
-                        UCDeploySite site = new UCDeploySite(null, url, user, password, trustAllCerts);
+                        log.info("[UrbanCode Deploy] Starting Test Connection...");
+                        log.info("{profileName: " + profileName + ", url: " + url + ", user: " + user + ", trustAllCerts: " + trustAllCerts + ", alwaysCreateNewClient: " + alwaysCreateNewClient + "}");
+                        UCDeploySite site = new UCDeploySite(profileName, url, user, password, trustAllCerts, false, alwaysCreateNewClient);
                         site.verifyConnection();
+                        log.info("[UrbanCode Deploy] Connection Successful...");
                         ok("Success");
                     }
                     catch (Exception e) {
+                        log.info("[UrbanCode Deploy] Connection Failed...");
+                        log.info(e.getMessage());
                         error(e.getMessage());
                     }
                 }

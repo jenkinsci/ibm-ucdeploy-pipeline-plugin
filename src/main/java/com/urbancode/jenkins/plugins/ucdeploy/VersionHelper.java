@@ -24,12 +24,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.nio.charset.Charset;
 
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 import com.urbancode.jenkins.plugins.ucdeploy.ComponentHelper.CreateComponentBlock;
 import com.urbancode.jenkins.plugins.ucdeploy.DeliveryHelper.DeliveryBlock;
@@ -40,6 +42,9 @@ import com.urbancode.ud.client.ComponentClient;
 import com.urbancode.ud.client.PropertyClient;
 import com.urbancode.ud.client.VersionClient;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * This class provides the structure and function around version control in IBM
  * UrbanCode Deploy via uDeployRestClient abstracted REST calls import
@@ -48,6 +53,7 @@ import com.urbancode.ud.client.VersionClient;
  */
 @SuppressWarnings("deprecation") // Triggered by DefaultHttpClient
 public class VersionHelper {
+    public static final Logger log = LoggerFactory.getLogger(VersionHelper.class);
     private ApplicationClient appClient;
     private ComponentClient compClient;
     private PropertyClient propClient;
@@ -134,21 +140,26 @@ public class VersionHelper {
 
         // create component
         if (versionBlock.createComponentChecked()) {
+            log.info("[UrbanCode Deploy] create component starts...");
             componentHelper.createComponent(componentName,
                                             versionBlock.getCreateComponent(),
                                             versionBlock.getDelivery());
+            log.info("[UrbanCode Deploy] create component ends...");
         }
 
         // tag component
         if (componentTag != null && !componentTag.isEmpty()) {
+            log.info("[UrbanCode Deploy] tag component starts...");
             componentHelper.addTag(componentName, componentTag);
+            log.info("[UrbanCode Deploy] tag component ends...");
         }
 
-        // create version
+        // create version and upload files
         if (versionBlock.getDelivery().getDeliveryType() == DeliveryBlock.DeliveryType.Push) {
+            log.info("[UrbanCode Deploy] create version and upload files starts...");
             Push pushBlock = (Push)versionBlock.getDelivery();
             String version = envVars.expand(pushBlock.getPushVersion());
-            listener.getLogger().println("Creating new component version '" + version + "' on component '" + componentName +
+            listener.getLogger().println("Creating new component version and Uploading files to version '" + version + "' on component '" + componentName +
                                          "'");
             if (version == null || version.isEmpty() || version.length() > 255) {
                 throw new AbortException("Failed to create version '" + version + "' in UrbanCode Deploy. UrbanCode Deploy " +
@@ -157,13 +168,31 @@ public class VersionHelper {
             }
 
             UUID versionId;
+            File base = new File(envVars.expand(pushBlock.getBaseDir()));
+            if (!base.exists()) {
+                throw new AbortException("Base artifact directory " + base.getAbsolutePath() + " does not exist");
+            }
+            
+            if(base.list().length==0) {
+                throw new AbortException("Base artifact directory " + base.getAbsolutePath() + " does not contain any files to upload. Please place files.");
+            }
+            String[] includes = splitFiles(envVars.expand(pushBlock.getFileIncludePatterns()));
+            String[] excludes = splitFiles(envVars.expand(pushBlock.getFileExcludePatterns()));
+            String[] extensions = splitFiles(envVars.expand(pushBlock.getExtensions()));
+            String charsetString = envVars.expand(pushBlock.getCharset());
+            Charset charset = Charset.defaultCharset();
+            if (!StringUtils.isBlank(charsetString)) {
+                listener.getLogger().println("Charset is provided... " + charsetString);
+                charset = Charset.forName(charsetString);
+                listener.getLogger().println("Charset Display Name: " + charset.displayName());
+            }
             try {
-                versionId = verClient.createVersion(componentName, version, envVars.expand(pushBlock.getPushDescription()));
+                versionId = verClient.createAndAddVersionFiles(componentName, version, envVars.expand(pushBlock.getPushDescription()), base, "", includes, excludes, true, true, charset, extensions);
             }
             catch (Exception ex) {
-                throw new AbortException("Failed to create component version: " + ex.getMessage());
+                throw new AbortException("Failed to create component version and uploading files: " + ex.getMessage());
             }
-            listener.getLogger().println("Successfully created component version with UUID '" + versionId.toString() + "'");
+            listener.getLogger().println("Successfully created component version with UUID '" + versionId.toString() + "' and uploaded files.");
 
             try {
                 putEnvVar(componentName + "_VersionId", versionId.toString());
@@ -171,28 +200,26 @@ public class VersionHelper {
             catch (Exception ex) {
                 listener.getLogger().println("[Warning] Failed to set version ID as environment variable.");
             }
-
-            // upload files
-            listener.getLogger().println("Uploading files to version '" + version + "' on component '" + componentName + "'");
-            uploadVersionFiles(envVars.expand(pushBlock.getBaseDir()),
-                               componentName,
-                               version,
-                               envVars.expand(pushBlock.getFileIncludePatterns()),
-                               envVars.expand(pushBlock.getFileExcludePatterns()));
-            listener.getLogger().println("Successfully uploaded files");
+            log.info("[UrbanCode Deploy] create version and upload files ends...");
 
             // set version properties
             listener.getLogger().println("Setting properties for version '" + version + "' on component '" + componentName + "'");
+            log.info("[UrbanCode Deploy] set version properties starts...");
             setComponentVersionProperties(componentName,
                                           version,
                                           DeliveryBlock.mapProperties(envVars.expand(pushBlock.getPushProperties())));
+            log.info("[UrbanCode Deploy] set version properties ends...");
 
             // add link
             listener.getLogger().println("Creating component version link '" + linkName + "' to URL '" + linkUrl + "'");
             try {
+                log.info("[UrbanCode Deploy] add link starts...");
                 compClient.addComponentVersionLink(componentName, version, linkName, linkUrl);
+                log.info("[UrbanCode Deploy] add link ends...");
             }
             catch (Exception ex) {
+                log.info("[UrbanCode Deploy] add link failed...");
+                log.info("Failed to add a version link: " + ex.getMessage());
                 throw new AbortException("Failed to add a version link: " + ex.getMessage());
             }
         }
@@ -205,19 +232,27 @@ public class VersionHelper {
             listener.getLogger().println("Using runtime properties " + mappedProperties);
 
             try {
+                log.info("[UrbanCode Deploy] import version starts...");
                 compClient.importComponentVersions(componentName, mappedProperties);
+                log.info("[UrbanCode Deploy] import version ends...");
             }
             catch (IOException ex) {
+                log.info("[UrbanCode Deploy] import version failed...");
+                log.info("An error occurred while importing component versions on component '" + componentName + "' : " + ex.getMessage());
                 throw new AbortException("An error occurred while importing component versions on component '" + componentName +
                                          "' : " + ex.getMessage());
             }
             catch (JSONException ex) {
+                log.info("[UrbanCode Deploy] import version failed...");
+                log.info("An error occurred while creating JSON version import object : " + ex.getMessage());
                 throw new AbortException("An error occurred while creating JSON version import object : " + ex.getMessage());
             }
         }
 
         // invalid type
         else {
+            log.info("[UrbanCode Deploy] invalid type...");
+            log.info("Invalid Delivery Type: " + versionBlock.getDelivery().getDeliveryType());
             throw new AbortException("Invalid Delivery Type: " + versionBlock.getDelivery().getDeliveryType());
         }
     }

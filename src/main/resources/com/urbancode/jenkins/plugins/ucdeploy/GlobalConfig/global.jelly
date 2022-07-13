@@ -21,12 +21,18 @@
           <f:entry title="Trust All Certificates" help="${helpURL}/global/trust.html">
             <f:checkbox name="trustAllCerts" checked="${site.trustAllCerts}"/>
           </f:entry>
+          <f:entry title="Skip Application Properties Import" help="${helpURL}/global/skipProps.html">
+            <f:checkbox name="skipProps" checked="${site.skipProps}"/>
+          </f:entry>
+          <f:entry title="Always Create New Client" help="${helpURL}/global/alwaysCreateNewClient.html">
+            <f:checkbox name="alwaysCreateNewClient" checked="${site.alwaysCreateNewClient}"/>
+          </f:entry>
           <f:entry title="">
             <div style="text-align: right">
               <f:repeatableDeleteButton/>
               <f:validateButton
                   title="${%Test Connection}" progress="${%Testing...}"
-                  method="testConnection" with="url,user,password,trustAllCerts"/>
+                  method="testConnection" with="profileName,url,user,password,trustAllCerts,alwaysCreateNewClient"/>
             </div>
           </f:entry>
         </div>

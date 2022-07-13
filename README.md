@@ -93,11 +93,16 @@ node {
 ```
 
 ## Release Notes
+### Version 2.27
+ Fixed : 401 unauthorised error while pushing artifacts to IBM UrbanCode Deploy server.
+ Added Global Fields for Skip Application Properties Import and Always Create New Client.
+ Added fields for Extensions of files to Convert field and Charset to push artifacts to component version step.
+
 ### Version 2.26
- Fixed : Removed httpcore dependencies as it is no more used 
+ Fixed : Removed httpcore dependencies as it is no more used.
 
 ### Version 2.25
- Fixed : Removed checkbox to push failed build as it was causing Trigger version Import step to work improperly
+ Fixed : Removed checkbox to push failed build as it was causing Trigger version Import step to work improperly.
  
 ### Version 2.24
 Fixed : Updated plugin url.
