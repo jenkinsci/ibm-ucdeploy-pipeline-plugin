@@ -385,7 +385,7 @@ public class DeployHelper {
                 }
             } catch (Exception ex) {
                 String exMessage = ex.getMessage();
-                String checkString = 'Snapshot with name ' + snapshot + ' already exists for this application';
+                String checkString = "Snapshot with name " + snapshot + " already exists for this application";
                 if (exMessage.contains(checkString) && createSnapshot.getUpdateSnapshotComp()) {
                     listener.getLogger().println("Updating environment snapshot '" + snapshot
                     + "' in UrbanCode Deploy.");
