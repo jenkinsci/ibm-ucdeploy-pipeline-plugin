@@ -143,7 +143,7 @@
               </f:block>
             </f:optionalBlock>
             <f:optionalBlock name="createSnapshot"
-                             title="Create Snapshot of Build Environment"
+                             title="Create/Update Snapshot of Build Environment"
                              help="${helpURL}/deploy/snapshot/help.html"
                              checked="${instance.createSnapshotChecked()}">
               <f:block>
@@ -152,6 +152,9 @@
                     <f:textbox default="${BUILD_ID}"/>
                   </f:entry>
                   <f:entry field="deployWithSnapshot" title="Deploy With Snapshot" help="${helpURL}/deploy/snapshot/deploy-snapshot.html">
+                    <f:checkbox/>
+                  </f:entry>
+                  <f:entry field="updateSnapshotComp" title="Update Component version in Snapshot" help="${helpURL}/deploy/snapshot/updateSnapshotComp.html">
                     <f:checkbox/>
                   </f:entry>
                   <f:entry field="includeOnlyDeployVersions" title="Include Only Deploy Versions" help="${helpURL}/deploy/deploy-snapshot-for-deploy-versions-only.html">
