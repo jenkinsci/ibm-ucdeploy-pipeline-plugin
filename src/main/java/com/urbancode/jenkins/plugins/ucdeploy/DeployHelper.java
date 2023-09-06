@@ -290,7 +290,7 @@ public class DeployHelper {
             }
         }
 
-        public Boolean geUpdateSnapshotComp() {
+        public Boolean getUpdateSnapshotComp() {
             if (updateSnapshotComp != null) {
                 return updateSnapshotComp;
             }
