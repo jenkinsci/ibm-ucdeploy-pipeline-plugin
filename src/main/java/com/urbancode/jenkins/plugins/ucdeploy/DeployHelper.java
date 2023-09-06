@@ -376,7 +376,7 @@ public class DeployHelper {
 
             listener.getLogger().println("Creating environment snapshot '" + snapshot
                     + "' in UrbanCode Deploy.");
-            
+
             try {
                 if (createSnapshot.getIncludeOnlyDeployVersions()) {
                     appClient.createSnapshot(snapshot, deployDesc, deployApp, componentVersions);
@@ -384,15 +384,15 @@ public class DeployHelper {
                     appClient.createSnapshotOfEnvironment(deployEnv, deployApp, snapshot, deployDesc);
                 }
             } catch (Exception ex) {
-                String exMessage = ex.getMessage()
-                if (exMessage.contains('Snapshot with name ' + snapshot + ' already exists for this application') && createSnapshot.getUpdateSnapshotComp()) {
+                String exMessage = ex.getMessage();
+                String checkString = 'Snapshot with name ' + snapshot + ' already exists for this application';
+                if (exMessage.contains(checkString) && createSnapshot.getUpdateSnapshotComp()) {
                     listener.getLogger().println("Updating environment snapshot '" + snapshot
                     + "' in UrbanCode Deploy.");
                 } else {
                     throw new AbortException(ex.getMessage());
                 }
             }
-            
 
             listener.getLogger().println("Acquiring all versions of the snapshot.");
             JSONArray snapshotVersions = appClient.getSnapshotVersions(snapshot, deployApp);
