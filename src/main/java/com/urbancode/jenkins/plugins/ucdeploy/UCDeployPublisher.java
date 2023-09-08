@@ -438,6 +438,14 @@ public class UCDeployPublisher extends Builder implements SimpleBuildStep {
 
         return false;
     }
+
+    public Boolean getUpdateSnapshotComp() {
+        if (getCreateSnapshot() != null) {
+            return ((getCreateSnapshot()).getUpdateSnapshotComp());
+        }
+
+        return false;
+    }
   
     public Boolean getIncludeOnlyDeployVersions() {
         if (getCreateSnapshot() != null) {
