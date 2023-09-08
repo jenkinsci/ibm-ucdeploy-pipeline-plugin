@@ -93,6 +93,10 @@ node {
 ```
 
 ## Release Notes
+
+### Version 2.28
+ Added Update Component version in existing Snapshot feature.
+
 ### Version 2.27
  Fixed : 401 unauthorised error while pushing artifacts to IBM UrbanCode Deploy server.
  Added Global Fields for Skip Application Properties Import and Always Create New Client.
